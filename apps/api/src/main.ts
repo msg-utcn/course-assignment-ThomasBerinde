@@ -8,7 +8,8 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger"
-import {API_ROUTE, SWAGGER_FEATURE} from "./app/question-management/question-management.config";
+import {QUESTIONS_SWAGGER_FEATURE} from "./app/question-management/question-management.config";
+import {USER_SWAGGER_FEATURE} from "./app/users/user-management.config";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,7 +20,7 @@ async function bootstrap() {
     .setTitle('MSG course API')
     .setDescription('The MSG API for Question Management')
     .setVersion('1.0')
-    .addTag(SWAGGER_FEATURE, API_ROUTE)
+    .addTag(QUESTIONS_SWAGGER_FEATURE, USER_SWAGGER_FEATURE)
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
