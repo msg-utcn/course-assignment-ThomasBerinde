@@ -7,7 +7,7 @@ export class QuestionModel {
   id?: string;
   @Column({ nullable: false })
   title: string;
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   postedBy: string;
   @Column({ nullable: false })
   content: string;
