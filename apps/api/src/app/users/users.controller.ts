@@ -1,5 +1,5 @@
 import {ApiTags} from "@nestjs/swagger";
-import {API_ROUTE, USER_SWAGGER_FEATURE} from "./user-management.config";
+import {API_ROUTE, USER_SWAGGER_FEATURE} from "./users.config";
 import {Body, Controller, Get, Param, Post} from "@nestjs/common";
 import {UserService} from "./user.service";
 import {UserDto} from "./dtos/user.dto";
@@ -7,7 +7,7 @@ import {RegisterUserDto} from "./dtos/register-user.dto";
 
 @ApiTags(USER_SWAGGER_FEATURE)
 @Controller(API_ROUTE)
-export class UserManagementController {
+export class UsersController {
   constructor(private userService: UserService) {}
 
   @Get()
