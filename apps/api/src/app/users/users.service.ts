@@ -9,7 +9,7 @@ import {LoginUserDto} from "./dtos/login-user.dto";
 import bcrypt from "bcrypt";
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(@InjectRepository(UserModel) private userModelRepository: Repository<UserModel>){}
 
   async readAll(): Promise<UserDto[]> {

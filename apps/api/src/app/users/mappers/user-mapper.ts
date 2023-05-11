@@ -1,6 +1,6 @@
 import {RegisterUserDto} from "../dtos/register-user.dto";
 import {UserModel} from "../model/user.model";
-import {UserRole} from "../model/user.role";
+import {UserRoleModel} from "../model/user-role.model";
 import {UserDto} from "../dtos/user.dto";
 import bcrypt from 'bcrypt';
 
@@ -10,7 +10,7 @@ export class UserMapper {
       id: undefined,
       name: dto.name,
       email: dto.email,
-      roles: [UserRole.USER],
+      roles: [UserRoleModel.USER],
       password: await bcrypt.hash(dto.password, await bcrypt.genSalt(10))
     })
   }

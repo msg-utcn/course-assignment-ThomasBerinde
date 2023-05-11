@@ -10,6 +10,7 @@ import { AppModule } from './app/app.module';
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger"
 import {QUESTIONS_SWAGGER_FEATURE} from "./app/question-management/question-management.config";
 import {USER_SWAGGER_FEATURE} from "./app/users/users.config";
+import {AuthConfig} from "./app/auth/auth.config";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +22,8 @@ async function bootstrap() {
     .setDescription('The MSG API for Question Management')
     .setVersion('1.0')
     .addTag(QUESTIONS_SWAGGER_FEATURE, USER_SWAGGER_FEATURE)
+    .addTag(AuthConfig.AUTH_SWAGGER_FEATURE)
+    .addBearerAuth() // for bearer auth in swagger
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

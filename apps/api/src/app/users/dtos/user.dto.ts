@@ -1,4 +1,4 @@
-import {UserRole} from "../model/user.role";
+import {UserRoleModel} from "../model/user-role.model";
 import {ApiProperty} from "@nestjs/swagger";
 
 export class UserDto {
@@ -25,7 +25,7 @@ export class UserDto {
     example: "[USER]",
     required: true
   })
-  roles: UserRole[]
+  roles: UserRoleModel[]
 
   constructor(values: Partial<UserDto>) {
     if (values) {

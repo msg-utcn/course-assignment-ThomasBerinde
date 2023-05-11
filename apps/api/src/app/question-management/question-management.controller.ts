@@ -1,11 +1,14 @@
 import {API_ROUTE, QUESTIONS_SWAGGER_FEATURE} from './question-management.config';
-import {Body, Controller, Get, Param, Post, Patch, Delete} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Patch, Delete, UseGuards} from '@nestjs/common';
 import {QuestionDto} from './dtos/question.dto';
 import {QuestionService} from "./question.service";
 import {CreateQuestionDto} from "./dtos/create-question.dto";
 import {UpdateQuestionDto} from "./dtos/update-question.dto";
-import {ApiTags} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {JwtAuthGuard} from "../auth/guards/jwt-auth.guard";
 
+@ApiBearerAuth() // specifies that the requests must be made with a bearer token
+@UseGuards(JwtAuthGuard)
 @ApiTags(QUESTIONS_SWAGGER_FEATURE)
 @Controller(API_ROUTE)
 export class QuestionManagementController {
