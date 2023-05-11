@@ -5,6 +5,8 @@ import {Repository} from "typeorm";
 import {UserDto} from "./dtos/user.dto";
 import {UserMapper} from "./mappers/user-mapper";
 import {RegisterUserDto} from "./dtos/register-user.dto";
+import {LoginUserDto} from "./dtos/login-user.dto";
+import bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
@@ -26,6 +28,14 @@ export class UserService {
     return UserMapper.mapToDto(foundUser);
   }
 
+  async getUserByEmail(email: string): Promise<UserDto> {
+    const foundUser = await this.userModelRepository.findOneBy({email});
+    if (!foundUser) {
+      throw new NotFoundException();
+    }
+    return UserMapper.mapToDto(foundUser);
+  }
+
   async create(dto: RegisterUserDto): Promise<UserDto> {
     let user = undefined
     try {
@@ -41,5 +51,13 @@ export class UserService {
       Logger.log(error, 'UserService.create');
       throw new BadRequestException();
     }
+  }
+
+  async checkCredentials(loginUserDto: LoginUserDto): Promise<boolean> {
+    const foundModel = await this.userModelRepository.findOneBy({email: loginUserDto.email})
+    if (!foundModel) {
+      return false;
+    }
+    return bcrypt.compare(loginUserDto.password, foundModel.password);
   }
 }

@@ -1,8 +1,8 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-import {UserRole} from "./user.role";
+import {UserRole} from "./user-role.model";
 
 @Entity()
-export class UserModel {
+export class UsersModel {
   @PrimaryGeneratedColumn('uuid')
   id?: string;
 
@@ -18,7 +18,7 @@ export class UserModel {
   @Column({nullable: false})
   password: string
 
-  constructor(values: Partial<UserModel>) {
+  constructor(values: Partial<UsersModel>) {
     if (values) {
       this.id = values.id;
       this.name = values.name;
