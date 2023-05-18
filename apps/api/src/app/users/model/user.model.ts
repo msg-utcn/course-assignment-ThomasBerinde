@@ -1,5 +1,6 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {UserRoleModel} from "./user-role.model";
+import {QuestionModel} from "../../question-management/model/question.model";
 
 @Entity()
 export class UserModel {
@@ -18,6 +19,9 @@ export class UserModel {
   @Column({nullable: false})
   password: string
 
+  @OneToMany(() => QuestionModel, question => question.postedBy)
+  questions: QuestionModel[];
+
   constructor(values: Partial<UserModel>) {
     if (values) {
       this.id = values.id;
@@ -25,6 +29,7 @@ export class UserModel {
       this.email = values.email;
       this.roles = values.roles;
       this.password = values.password;
+      this.questions = values.questions;
     }
   }
 }

@@ -1,6 +1,7 @@
 import {QuestionTopic} from './question-topic';
-import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import {AnswerModel} from "./answer.model";
+import {UserModel} from "../../users/model/user.model";
 
 @Entity()
 export class QuestionModel {
@@ -8,8 +9,11 @@ export class QuestionModel {
   id?: string;
   @Column({nullable: false})
   title: string;
-  @Column({nullable: true})
-  postedBy: string;
+  @ManyToOne(() => UserModel, user => user.questions, {
+    nullable: false,
+    cascade: true
+  })
+  postedBy: UserModel;
   @Column({nullable: false})
   content: string;
   @Column({nullable: false, enum: QuestionTopic, type: 'enum'})
@@ -18,7 +22,6 @@ export class QuestionModel {
   rating: number;
   @Column({nullable: false})
   creationDate: string;
-
   @OneToMany(() => AnswerModel, answer => answer.parent)
   answers?: AnswerModel[];
 

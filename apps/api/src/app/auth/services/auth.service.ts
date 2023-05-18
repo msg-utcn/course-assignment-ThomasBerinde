@@ -21,8 +21,8 @@ export class AuthService {
   async login(dto: JwtPayloadDto): Promise<JwtTokenDto>{
     return {
       access_token: await this.jwtService.signAsync({
+        id: dto.id,
         email: dto.email,
-        sub: dto.userId,
       })
     };
   }

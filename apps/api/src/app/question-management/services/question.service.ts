@@ -7,6 +7,7 @@ import {QuestionMapper} from "../mappers/question.mapper";
 import {CreateQuestionDto} from "../dtos/create-question.dto";
 import {UpdateQuestionDto} from "../dtos/update-question.dto";
 import {AnswerModel} from "../model/answer.model";
+import {UserModel} from "../../users/model/user.model";
 
 // To be able to be injected anywhere you need to annotate it with this
 // And then you have to put it in the module where you inject it at 'providers'
@@ -16,12 +17,14 @@ export class QuestionService {
     @InjectRepository(QuestionModel)
     private questionModelRepository: Repository<QuestionModel>,
     @InjectRepository(AnswerModel)
-    private answerModelRepository: Repository<AnswerModel>
+    private answerModelRepository: Repository<AnswerModel>,
+    @InjectRepository(UserModel)
+    private userModelRepository: Repository<UserModel>
   ) {
   }
 
   async readAll(): Promise<QuestionDto[]> {
-    const foundModels = await this.questionModelRepository.find();
+    const foundModels = await this.questionModelRepository.find({relations: ['postedBy']});
     if (!foundModels) {
       return [];
     }
@@ -33,8 +36,12 @@ export class QuestionService {
     return QuestionMapper.mapToDto(foundModel);
   }
 
-  async create(dto: CreateQuestionDto): Promise<QuestionDto> {
-    const model = QuestionMapper.mapCreateQuestionToModel(dto);
+  async create(userId: string, dto: CreateQuestionDto): Promise<QuestionDto> {
+    const foundUser = await this.userModelRepository.findOneBy({id: userId})
+    if (!foundUser) {
+      throw new BadRequestException();
+    }
+    const model = QuestionMapper.mapCreateQuestionToModel(foundUser, dto);
     try {
       const savedModel = await this.questionModelRepository.save(model);
       return QuestionMapper.mapToDto(savedModel);
@@ -58,14 +65,13 @@ export class QuestionService {
 
   async delete(id: string): Promise<void> {
     let questionDeletedResult = null;
-    let answerDeleteResult
     try {
-      answerDeleteResult = await this.answerModelRepository.delete({parent: { id }});
+      await this.answerModelRepository.delete({parent: { id }});
       questionDeletedResult = await this.questionModelRepository.delete({id});
     } catch (error) {
       throw new BadRequestException(error.message);
     }
-    if (questionDeletedResult.affected === 0 || answerDeleteResult.affected === 0) {
+    if (questionDeletedResult.affected === 0) {
       throw new BadRequestException();
     }
   }
@@ -73,7 +79,7 @@ export class QuestionService {
   private async readModelById(id: string): Promise<QuestionModel> {
     let foundModel = null;
     try {
-      foundModel = await this.questionModelRepository.findOne({where: {id}});
+      foundModel = await this.questionModelRepository.findOne({where: {id}, relations:['postedBy']});
     } catch (error) {
       throw new BadRequestException(error);
     }

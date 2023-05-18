@@ -1,16 +1,19 @@
 import {API_ROUTE, QUESTIONS_SWAGGER_FEATURE} from '../question-management.config';
-import {Body, Controller, Get, Param, Post, Patch, Delete, UseGuards, Put} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Patch, Delete, UseGuards, Put, Request} from '@nestjs/common';
 import {QuestionDto} from '../dtos/question.dto';
 import {QuestionService} from "../services/question.service";
 import {CreateQuestionDto} from "../dtos/create-question.dto";
 import {UpdateQuestionDto} from "../dtos/update-question.dto";
-import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {JwtAuthGuard} from "../../auth/guards/jwt-auth.guard";
 import {AnswerDto} from "../dtos/answer.dto";
 import {AnswerService} from "../services/answer.service";
 import {CreateAnswerDto} from "../dtos/create-answer.dto";
 import {UpdateAnswerDto} from "../dtos/update-answer.dto";
 import {ApiImplicitParam} from "@nestjs/swagger/dist/decorators/api-implicit-param.decorator";
+import {LocalAuthGuard} from "../../auth/guards/local-auth.guard";
+import {JwtTokenDto} from "../../auth/dto/jwt-token.dto";
+import {LoginUserDto} from "../../users/dtos/login-user.dto";
 
 @ApiBearerAuth() // specifies that the requests must be made with a bearer token
 @UseGuards(JwtAuthGuard)
@@ -34,8 +37,8 @@ export class QuestionManagementController {
   }
 
   @Post()
-  async createQuestion(@Body() dto: CreateQuestionDto): Promise<QuestionDto> {
-    return this.questionService.create(dto);
+  async createQuestion(@Request() req, @Body() dto: CreateQuestionDto): Promise<QuestionDto> {
+    return this.questionService.create(req.user.id, dto);
   }
 
   @Patch(':id')
