@@ -1,10 +1,10 @@
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
-import {API_ROUTE, USER_SWAGGER_FEATURE} from "./users.config";
+import {API_ROUTE, USER_SWAGGER_FEATURE} from "../users.config";
 import {Body, Controller, Get, Param, Post, UseGuards} from "@nestjs/common";
-import {UsersService} from "./users.service";
-import {UserDto} from "./dtos/user.dto";
-import {RegisterUserDto} from "./dtos/register-user.dto";
-import {JwtAuthGuard} from "../auth/guards/jwt-auth.guard";
+import {UsersService} from "../services/users.service";
+import {UserDto} from "../dtos/user.dto";
+import {RegisterUserDto} from "../dtos/register-user.dto";
+import {JwtAuthGuard} from "../../auth/guards/jwt-auth.guard";
 
 @ApiBearerAuth() // specifies that the requests must be made with a bearer token
 @UseGuards(JwtAuthGuard)

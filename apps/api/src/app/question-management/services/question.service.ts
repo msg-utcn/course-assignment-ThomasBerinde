@@ -1,17 +1,24 @@
 import {BadRequestException, Injectable, Logger, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {QuestionModel} from "./model/question.model";
+import {QuestionModel} from "../model/question.model";
 import {Repository} from "typeorm";
-import {QuestionDto} from "./dtos/question.dto";
-import {QuestionMapper} from "./mappers/question.mapper";
-import {CreateQuestionDto} from "./dtos/create-question.dto";
-import {UpdateQuestionDto} from "./dtos/update-question.dto";
+import {QuestionDto} from "../dtos/question.dto";
+import {QuestionMapper} from "../mappers/question.mapper";
+import {CreateQuestionDto} from "../dtos/create-question.dto";
+import {UpdateQuestionDto} from "../dtos/update-question.dto";
+import {AnswerModel} from "../model/answer.model";
 
 // To be able to be injected anywhere you need to annotate it with this
 // And then you have to put it in the module where you inject it at 'providers'
 @Injectable()
 export class QuestionService {
-  constructor(@InjectRepository(QuestionModel) private questionModelRepository: Repository<QuestionModel>){}
+  constructor(
+    @InjectRepository(QuestionModel)
+    private questionModelRepository: Repository<QuestionModel>,
+    @InjectRepository(AnswerModel)
+    private answerModelRepository: Repository<AnswerModel>
+  ) {
+  }
 
   async readAll(): Promise<QuestionDto[]> {
     const foundModels = await this.questionModelRepository.find();
@@ -50,14 +57,26 @@ export class QuestionService {
   }
 
   async delete(id: string): Promise<void> {
-    const deletedResult = await this.questionModelRepository.delete({id});
-    if (deletedResult.affected === 0) {
+    let questionDeletedResult = null;
+    let answerDeleteResult
+    try {
+      answerDeleteResult = await this.answerModelRepository.delete({parent: { id }});
+      questionDeletedResult = await this.questionModelRepository.delete({id});
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+    if (questionDeletedResult.affected === 0 || answerDeleteResult.affected === 0) {
       throw new BadRequestException();
     }
   }
 
   private async readModelById(id: string): Promise<QuestionModel> {
-    const foundModel = await this.questionModelRepository.findOne({where: {id}});
+    let foundModel = null;
+    try {
+      foundModel = await this.questionModelRepository.findOne({where: {id}});
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
     if (!foundModel) {
       throw new NotFoundException();
     }

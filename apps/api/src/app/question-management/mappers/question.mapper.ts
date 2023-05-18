@@ -13,6 +13,7 @@ export class QuestionMapper {
       content: dto.content,
       topic: dto.topic,
       creationDate: new Date().toISOString(),
+      answers: []
     });
   }
 
