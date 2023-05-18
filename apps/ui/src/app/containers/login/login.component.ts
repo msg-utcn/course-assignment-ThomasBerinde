@@ -14,7 +14,10 @@ export class LoginComponent implements DoCheck {
   }
 
   public login(authenticate: Authenticate): void {
-    this.authService.login(authenticate).subscribe();
+    this.authService.login(authenticate).subscribe(data => {
+      console.log(data.access_token);
+      localStorage.setItem("access_token", data.access_token);
+    });
   }
   ngDoCheck() {
     console.log('login check!');

@@ -20,6 +20,9 @@ async function bootstrap() {
   // validator
   app.useGlobalPipes(new ValidationPipe());
 
+  // cors
+  app.enableCors();
+
   const config = new DocumentBuilder()
     .setTitle('MSG course API')
     .setDescription('The MSG API for Question Management')
