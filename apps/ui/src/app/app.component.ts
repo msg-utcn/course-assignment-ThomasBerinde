@@ -7,4 +7,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ui';
+
+  print() {
+    console.log('in app print');
+  }
+
+  ngDoCheck() {
+    console.log('app check!');
+  }
 }
