@@ -1,4 +1,4 @@
-import {Body, Controller, Post, Request, UseGuards} from "@nestjs/common";
+import {Body, Controller, Post, Request, UseGuards, UsePipes, ValidationPipe} from "@nestjs/common";
 import {ApiBody, ApiOkResponse, ApiTags} from "@nestjs/swagger";
 import {AuthConfig} from "./auth.config";
 import {JwtTokenDto} from "./dto/jwt-token.dto";
@@ -16,8 +16,8 @@ export class AuthController {
   constructor(private authService: AuthService, private usersService: UsersService) {
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
+  @UseGuards(LocalAuthGuard)
   @ApiOkResponse({
     description: "The JWT Access Token",
     type: JwtTokenDto,
