@@ -17,6 +17,12 @@ export class AnswerDto {
   content: string;
 
   @ApiProperty({
+    description: 'The question of the answer',
+    required: true,
+  })
+  parentId: string;
+
+  @ApiProperty({
     description:
       'The calculated rating of the answer based on number of upvotes or downvotes',
     required: false,
@@ -33,6 +39,7 @@ export class AnswerDto {
     if (values) {
       this.id = values.id;
       this.content = values.content;
+      this.parentId = values.parentId;
       this.rating = values.rating;
       this.creationDate = values.creationDate;
     }

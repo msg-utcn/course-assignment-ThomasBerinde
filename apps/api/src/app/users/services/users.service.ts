@@ -1,11 +1,11 @@
 import {BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
-import {UserModel} from "./model/user.model";
+import {UserModel} from "../model/user.model";
 import {Repository} from "typeorm";
-import {UserDto} from "./dtos/user.dto";
-import {UserMapper} from "./mappers/user-mapper";
-import {RegisterUserDto} from "./dtos/register-user.dto";
-import {LoginUserDto} from "./dtos/login-user.dto";
+import {UserDto} from "../dtos/user.dto";
+import {UserMapper} from "../mappers/user-mapper";
+import {RegisterUserDto} from "../dtos/register-user.dto";
+import {LoginUserDto} from "../dtos/login-user.dto";
 import bcrypt from "bcrypt";
 
 @Injectable()

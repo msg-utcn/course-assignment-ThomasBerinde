@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { QuestionManagementController } from './question-management.controller';
+import { QuestionManagementController } from './controllers/question-management.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuestionModel } from './model/question.model';
 import {QuestionService} from "./services/question.service";

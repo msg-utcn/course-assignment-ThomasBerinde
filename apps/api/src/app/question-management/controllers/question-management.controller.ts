@@ -1,15 +1,15 @@
-import {API_ROUTE, QUESTIONS_SWAGGER_FEATURE} from './question-management.config';
+import {API_ROUTE, QUESTIONS_SWAGGER_FEATURE} from '../question-management.config';
 import {Body, Controller, Get, Param, Post, Patch, Delete, UseGuards, Put} from '@nestjs/common';
-import {QuestionDto} from './dtos/question.dto';
-import {QuestionService} from "./services/question.service";
-import {CreateQuestionDto} from "./dtos/create-question.dto";
-import {UpdateQuestionDto} from "./dtos/update-question.dto";
+import {QuestionDto} from '../dtos/question.dto';
+import {QuestionService} from "../services/question.service";
+import {CreateQuestionDto} from "../dtos/create-question.dto";
+import {UpdateQuestionDto} from "../dtos/update-question.dto";
 import {ApiBearerAuth, ApiTags} from "@nestjs/swagger";
-import {JwtAuthGuard} from "../auth/guards/jwt-auth.guard";
-import {AnswerDto} from "./dtos/answer.dto";
-import {AnswerService} from "./services/answer.service";
-import {CreateAnswerDto} from "./dtos/create-answer.dto";
-import {UpdateAnswerDto} from "./dtos/update-answer.dto";
+import {JwtAuthGuard} from "../../auth/guards/jwt-auth.guard";
+import {AnswerDto} from "../dtos/answer.dto";
+import {AnswerService} from "../services/answer.service";
+import {CreateAnswerDto} from "../dtos/create-answer.dto";
+import {UpdateAnswerDto} from "../dtos/update-answer.dto";
 import {ApiImplicitParam} from "@nestjs/swagger/dist/decorators/api-implicit-param.decorator";
 
 @ApiBearerAuth() // specifies that the requests must be made with a bearer token
@@ -20,17 +20,12 @@ export class QuestionManagementController {
   constructor(
     private questionService: QuestionService,
     private answerService: AnswerService
-  ) {}
+  ) {
+  }
 
   @Get()
   async getAllQuestions(): Promise<QuestionDto[]> {
     return this.questionService.readAll();
-  }
-
-  // This endpoint must be put before "getQuestionById", since they have conflicting routes
-  @Get('answers')
-  async getAllAnswers(): Promise<AnswerDto[]> {
-    return this.answerService.readAll();
   }
 
   @Get(':id')
@@ -53,28 +48,36 @@ export class QuestionManagementController {
     return this.questionService.delete(id);
   }
 
+  @Get(':questionId/answers')
+  async getAllAnswers(@Param('questionId') questionId: string): Promise<AnswerDto[]> {
+    return this.answerService.readAllByQuestionId(questionId);
+  }
+
   @ApiImplicitParam({name: 'answerId', type: String})  // this is for swagger
   @Get('answers/:answerId')
   async getAnswerById(@Param('answerId') answerId: string) {
     return this.answerService.readById(answerId);
   }
 
-  @Post('answers')
-  async createAnswer(@Body() dto: CreateAnswerDto): Promise<AnswerDto> {
-    return this.answerService.create(dto);
+  @Post(':questionId/answers')
+  async createAnswer(@Param('questionId') questionId: string,
+                     @Body() dto: CreateAnswerDto): Promise<AnswerDto> {
+    return this.answerService.create(questionId, dto);
   }
 
-  @ApiImplicitParam({name: 'answerId', type: String})  // this is for swagger
-  @Put('answers/:answerId')
+  @ApiImplicitParam({name: 'questionId', type: String})  // this is for swagger
+  @ApiImplicitParam({name: 'answerId', type: String})
+  @Put(':questionId/answers/:answerId')
   async updateAnswer(
+    @Param('answerId') answerId: string,
     @Body() dto: UpdateAnswerDto,
-    @Param('answerId') answerId: string
   ): Promise<AnswerDto> {
     return this.answerService.update(answerId, dto);
   }
 
-  @ApiImplicitParam({name: 'answerId', type: String})  // this is for swagger
-  @Delete('answers/:answerId')
+  @ApiImplicitParam({name: 'questionId', type: String})  // this is for swagger
+  @ApiImplicitParam({name: 'answerId', type: String})
+  @Delete(':questionId/answers/:answerId')
   async deleteAnswer(@Param('answerId') answerId: string): Promise<void> {
     return this.answerService.delete(answerId);
   }

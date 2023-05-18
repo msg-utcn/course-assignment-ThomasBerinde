@@ -6,12 +6,19 @@ import {QuestionDto} from "../dtos/question.dto";
 import {QuestionMapper} from "../mappers/question.mapper";
 import {CreateQuestionDto} from "../dtos/create-question.dto";
 import {UpdateQuestionDto} from "../dtos/update-question.dto";
+import {AnswerModel} from "../model/answer.model";
 
 // To be able to be injected anywhere you need to annotate it with this
 // And then you have to put it in the module where you inject it at 'providers'
 @Injectable()
 export class QuestionService {
-  constructor(@InjectRepository(QuestionModel) private questionModelRepository: Repository<QuestionModel>){}
+  constructor(
+    @InjectRepository(QuestionModel)
+    private questionModelRepository: Repository<QuestionModel>,
+    @InjectRepository(AnswerModel)
+    private answerModelRepository: Repository<AnswerModel>
+  ) {
+  }
 
   async readAll(): Promise<QuestionDto[]> {
     const foundModels = await this.questionModelRepository.find();
@@ -50,13 +57,15 @@ export class QuestionService {
   }
 
   async delete(id: string): Promise<void> {
-    let deletedResult = null;
+    let questionDeletedResult = null;
+    let answerDeleteResult
     try {
-      deletedResult = await this.questionModelRepository.delete({id});
+      answerDeleteResult = await this.answerModelRepository.delete({parent: { id }});
+      questionDeletedResult = await this.questionModelRepository.delete({id});
     } catch (error) {
       throw new BadRequestException(error.message);
     }
-    if (deletedResult.affected === 0) {
+    if (questionDeletedResult.affected === 0 || answerDeleteResult.affected === 0) {
       throw new BadRequestException();
     }
   }

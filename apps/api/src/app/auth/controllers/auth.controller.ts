@@ -1,13 +1,13 @@
 import {Body, Controller, Post, Request, UseGuards, UsePipes, ValidationPipe} from "@nestjs/common";
 import {ApiBody, ApiOkResponse, ApiTags} from "@nestjs/swagger";
-import {AuthConfig} from "./auth.config";
-import {JwtTokenDto} from "./dto/jwt-token.dto";
-import {AuthService} from "./auth.service";
-import {LoginUserDto} from "../users/dtos/login-user.dto";
-import {RegisterUserDto} from "../users/dtos/register-user.dto";
-import {UserDto} from "../users/dtos/user.dto";
-import {UsersService} from "../users/users.service";
-import {LocalAuthGuard} from "./guards/local-auth.guard";
+import {AuthConfig} from "../auth.config";
+import {JwtTokenDto} from "../dto/jwt-token.dto";
+import {AuthService} from "../services/auth.service";
+import {LoginUserDto} from "../../users/dtos/login-user.dto";
+import {RegisterUserDto} from "../../users/dtos/register-user.dto";
+import {UserDto} from "../../users/dtos/user.dto";
+import {UsersService} from "../../users/services/users.service";
+import {LocalAuthGuard} from "../guards/local-auth.guard";
 
 // @UseGuards(LocalAuthGuard) - can be put at controller level or method level (here we use method level)
 @ApiTags(AuthConfig.AUTH_SWAGGER_FEATURE)
